@@ -1,0 +1,17 @@
+/.utmp
+/.vscode
+/Assembly-CSharp.csproj
+/com.amreamer.fidelitybook-20261029-073854-0.mp4
+/com.amreamer.fidelitybook-20261029-124010-0.mp4
+/FidelityBook.apk
+/FidelityBook.slnx
+/FidelityBook_BackUpThisFolder_ButDontShipItWithYourGame
+/FidelityBook_BurstDebugInformation_DoNotShip
+/Library
+/Logs
+/Temp
+/Unity.XR.Hands.Samples.VisualizerSample.csproj
+/Unity.XR.Interaction.Toolkit.Samples.Hands.csproj
+/Unity.XR.Interaction.Toolkit.Samples.Hands.Editor.csproj
+/Unity.XR.Interaction.Toolkit.Samples.StarterAssets.csproj
+/Unity.XR.Interaction.Toolkit.Samples.StarterAssets.Editor.csproj
