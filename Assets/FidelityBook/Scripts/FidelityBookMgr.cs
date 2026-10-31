@@ -2,19 +2,18 @@ using UnityEngine;
 
 public class FidelityBookMgr : MonoBehaviour
 {
-    public HandsMgr handsMgr;
-    public GameObject goTarget;
+    public Globals g;
+    int cntFps;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        InvokeRepeating(nameof(Fps), 1, 1);
     }
 
-    // Update is called once per frame
-    void Update()
+    void Fps()
     {
-        if (Application.isEditor) return;
-        goTarget.transform.position = handsMgr.posLeft;    
+        g.displaysMgr.SetFps(cntFps);
+        cntFps = 0;
     }
 }
+

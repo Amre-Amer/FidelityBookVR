@@ -39,9 +39,9 @@ MonoBehaviour:
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 1223.2
+    x: 1224
     y: 0
-    width: 312
+    width: 311.19995
     height: 708.8
   m_MinSize: {x: 401, y: 626}
   m_MaxSize: {x: 601, y: 1226}
@@ -94,7 +94,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 968.8
     y: 0
-    width: 254.39996
+    width: 255.20001
     height: 708.8
   m_MinSize: {x: 277, y: 76}
   m_MaxSize: {x: 4002, y: 4026}
@@ -621,9 +621,9 @@ MonoBehaviour:
     m_TextWithWhitespace: "Tutorials\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1224.2
+    x: 1225
     y: 24
-    width: 311
+    width: 310.19995
     height: 682.8
   m_SerializedDataModeController:
     m_DataMode: 0
@@ -710,7 +710,8 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 65226
+    - m_Data: 65456
+    - m_Data: 65458
     - m_Data: 1000000000
     - m_Data: 2147483647
     m_RenameOverlay:
@@ -745,7 +746,8 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 65226
+    - m_Data: 65456
+    - m_Data: 65458
     - m_Data: 1000000000
     - m_Data: 2147483647
     m_RenameOverlay:
@@ -830,7 +832,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 969.8
     y: 24
-    width: 252.39996
+    width: 253.20001
     height: 682.8
   m_SerializedDataModeController:
     m_DataMode: 0
@@ -1467,7 +1469,7 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -1.1227373, y: 1.392084, z: 0.45077875}
+    m_Target: {x: -0.83045834, y: 1.1097915, z: 1.2598445}
     speed: 2
     m_Value: {x: -1.1227373, y: 1.392084, z: 0.45077875}
   m_RenderMode: 0
@@ -1515,11 +1517,11 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.06817157, y: 0.8931637, z: -0.1448804, w: 0.42026672}
+    m_Target: {x: 0.071186, y: 0.85264224, z: -0.12049791, w: 0.50347525}
     speed: 2
     m_Value: {x: 0.06817157, y: 0.89316374, z: -0.14488041, w: 0.42026675}
   m_Size:
-    m_Target: 0.15512028
+    m_Target: 0.71397483
     speed: 2
     m_Value: 0.15512028
   m_Ortho:
