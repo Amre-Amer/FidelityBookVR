@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DisplaysMgr : MonoBehaviour
 {
-    public Globals g;
+    public GlobalsMgr g;
 
     void Awake()
     {

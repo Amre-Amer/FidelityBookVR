@@ -5,8 +5,7 @@ using UnityEngine.XR.Hands;
 
 public class HandsMgr : MonoBehaviour
 {
-    public Vector3 posLeft;
-    public Vector3 posRight;
+    public GlobalsMgr g;
     private XRHandSubsystem m_HandSubsystem;
     private XROrigin xrOrigin;
 
@@ -18,38 +17,28 @@ public class HandsMgr : MonoBehaviour
         {
             m_HandSubsystem = handSubsystems[0];
         }
-        xrOrigin = Object.FindFirstObjectByType<XROrigin>();
+        xrOrigin = FindFirstObjectByType<XROrigin>();
     }
 
-    void Update()
+    public bool SetPosLeftIfAvailable()
     {
-        if (m_HandSubsystem == null || !m_HandSubsystem.running) return;
-
-        // 1. Left Hand Wrist / Root
-        posLeft = GetHandWristPosition(m_HandSubsystem.leftHand);
-
-        // 2. Right Hand Wrist / Root
-        // posRight = GetHandWristPosition(m_HandSubsystem.rightHand);
+        if (m_HandSubsystem == null || !m_HandSubsystem.running) {
+            return false;
+        }
+        g.posLeftHand = GetHandWristPosition(m_HandSubsystem.leftHand);
+        // g.posRightHand = GetHandWristPosition(m_HandSubsystem.rightHand);
+        return true;
     }
 
     Vector3 GetHandWristPosition(XRHand hand)
     {
-        Vector3 position = Vector3.zero;
-
         if (!hand.isTracked) return Vector3.zero;
-
-        // Option A: Using hand.rootPose (Represents the wrist/root pose of the hand)
-        // if (hand.rootPose != null)
-        // {
-            // position = hand.rootPose.position;
-            // // Option B: Using the specific XRHandJointID.Wrist joint
-            var wristJoint = hand.GetJoint(XRHandJointID.Wrist);
-            if (wristJoint.TryGetPose(out Pose jointPose))
-            {
-                // position = jointPose.position;
-                position = xrOrigin.transform.TransformPoint(jointPose.position);
-            }
-        // }
+        Vector3 position = Vector3.zero;
+        var wristJoint = hand.GetJoint(XRHandJointID.Wrist);
+        if (wristJoint.TryGetPose(out Pose jointPose))
+        {
+            position = xrOrigin.transform.TransformPoint(jointPose.position);
+        }
         return position;
     }
 }

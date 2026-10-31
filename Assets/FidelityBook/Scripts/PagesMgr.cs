@@ -1,32 +1,12 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PagesMgr : MonoBehaviour
 {
-    public Globals g;
-    float distMove;
-    float dirMove;
-    List<GameObject>markers = new();
+    public GlobalsMgr g;
 
     void Awake()
     {
         LoadPages();
-    }
-
-    void Start()
-    {
-        distMove = .01f;
-        dirMove = 1;
-        AddMarkers();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        UpdateTarget();
-        g.nPageSelected = FindMarker();
-        HighlightMarker();
-        AdjustPages();
     }
 
     void LoadPages()
@@ -38,7 +18,7 @@ public class PagesMgr : MonoBehaviour
         }    
     }
 
-    void AdjustPages()
+    public void AdjustPages()
     {
         for(int n = 0; n < g.pages.Count; n++)
         {
@@ -52,80 +32,38 @@ public class PagesMgr : MonoBehaviour
         }
     }
 
-    void HighlightMarker()
+    public void SetNPageSelectedForInference(float [] outputNormalized)
     {
-        for(int n = 0; n < markers.Count; n++)
+        g.nPageSelected = -1;
+        float max = -1;
+        for(int n = 0; n < outputNormalized.Length; n++)
         {
-            GameObject marker = markers[n];
-            Color color = Color.black;
-            if (n == g.nPageSelected) color = Color.green;
-            SetColor(marker, color);
-        }
+            float value = outputNormalized[n];
+            if (value > max || n == 0)
+            {
+                g.nPageSelected = n;
+                max = value;
+            }
+        }  
     }
 
-    void SetColor(GameObject go, Color color)
-    {
-        go.GetComponent<Renderer>().material.color = color;
-    }
-
-    int FindMarker()
+    public void SetNPageSelectedByDistFromTargetForTraining()
     {
         float distMin = -1;
-        int nMin = -1;    
-        for(int n = 0; n < markers.Count; n++)
+        g.nPageSelected = -1;
+        for(int n = 0; n < g.scoresMgr.scores.Count; n++) // amre
         {
-            GameObject marker = markers[n];
-            float dist = Vector3.Distance(g.goTarget.transform.position, marker.transform.position);
+            ScoreMgr score = g.scoresMgr.scores[n];
+            float dist = Vector3.Distance(g.goTarget.transform.position, score.transform.position);
             if (dist < distMin || n == 0)
             {
                 distMin = dist;
-                nMin = n;
+                g.nPageSelected = n;
             }
         }    
-        if (nMin < 0) Debug.Log("<color=red>Marker not found !</color>\n");
-        return nMin;
-    }
-
-    void UpdateTarget()
-    {
-        MoveTarget();
-        float z = g.goTarget.transform.position.z;
-        if (dirMove == 1 && z > g.goRight.transform.position.z)
+        if (g.nPageSelected == -1)
         {
-            dirMove  = -1;
+            Debug.Log("<color=red>g.nPageSelected == -1</color>\n");
         }
-        if (dirMove == -1 && z < g.goLeft.transform.position.z)
-        {
-            dirMove  = 1;
-        }
-    }
-
-    void MoveTarget()
-    {
-        // Debug.Log("Application.isEditor: " + Application.isEditor + "\n");
-        if (Application.isEditor == false) return;
-        Vector3 pos = g.goTarget.transform.position;
-        pos.z += distMove * dirMove;
-        g.goTarget.transform.position = pos;
-    }
-
-    void AddMarkers()
-    {
-        for(int n = 0; n < g.pages.Count - 1; n++)
-        {
-            PageMgr pageLeft = g.pages[n];
-            PageMgr pageRight = g.pages[n + 1];
-            Vector3 posMid = (pageLeft.transform.position + pageRight.transform.position) / 2;
-            GameObject marker = CreateMarker(posMid);
-            marker.name = "marker_" + n;
-            markers.Add(marker);
-        }
-    }
-
-    GameObject CreateMarker(Vector3 pos)
-    {
-        GameObject marker = Instantiate(g.markerPrefab, transform);        
-        marker.transform.position = pos;
-        return marker;
     }
 }

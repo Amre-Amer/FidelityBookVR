@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TrainMgr : MonoBehaviour
 {
-    public Globals g;   
+    public GlobalsMgr g;   
     int cntSave;
     int numPages;
     float progress;
@@ -13,12 +13,6 @@ public class TrainMgr : MonoBehaviour
         numPages = g.pages.Count - 1;
         ResetFolder(g.pathFolder);
         AddClassFolders();
-    }
-
-    void Update()
-    {
-        if (g.trainInfer == TrainInferType.infer) return;
-        UpdateTrain();
     }
 
     void AddClassFolders()
@@ -31,7 +25,7 @@ public class TrainMgr : MonoBehaviour
         }
     }
 
-    void UpdateTrain()
+    public void UpdateTrain()
     {
         if (cntSave == g.cntMaxTraining)
         {
@@ -39,14 +33,13 @@ public class TrainMgr : MonoBehaviour
             Debug.Log("Done\n");
         }
         if (cntSave > g.cntMaxTraining) return;
-        Texture2D tex = g.textureConverter.RenderTextureToTexture2D(g.renderTexture);
+        Texture2D tex = g.toolsMgr.RenderTextureToTexture2D(g.renderTexture);
         byte[] bytes = tex.EncodeToPNG();
         string pathClass = "class_" + g.nPageSelected;
         string filename = "image_" + cntSave + "_" + g.nPageSelected + ".png"; 
         string filespec = Path.Combine(g.pathFolder, pathClass, filename);
         File.WriteAllBytes(filespec, bytes);
         ShowProgress();
-        // Debug.Log(filespec + "\n");
         cntSave++;
     }
 

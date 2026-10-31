@@ -3,6 +3,7 @@ using TMPro;
 
 public class DisplayMgr : MonoBehaviour
 {
+    public GlobalsMgr g;
     public TMP_Text textFps;
     public GameObject goProgress;
 
@@ -19,11 +20,6 @@ public class DisplayMgr : MonoBehaviour
 
     public void ShowProgressDone()
     {
-        SetColor(goProgress, Color.green);        
-    }
-
-    void SetColor(GameObject go, Color color)
-    {
-        go.GetComponentInChildren<Renderer>().material.color = color;
+        g.toolsMgr.SetColor(goProgress, Color.green);        
     }
 }
