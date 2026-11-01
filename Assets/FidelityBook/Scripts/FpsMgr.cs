@@ -10,6 +10,11 @@ public class FpsMgr : MonoBehaviour
         InvokeRepeating(nameof(Fps), 1, 1);
     }
 
+    void Update()
+    {
+        cntFps++;
+    }
+
     void Fps()
     {
         g.displaysMgr.SetFps(cntFps);

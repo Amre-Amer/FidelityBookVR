@@ -18,6 +18,14 @@ public class DisplaysMgr : MonoBehaviour
         }
     }
 
+    public void SetCount(string txt)
+    {
+        foreach(DisplayMgr display in g.displays)
+        {
+            display.SetCount(txt);
+        }
+    }
+
     public void SetFps(int fps)
     {
         foreach(DisplayMgr display in g.displays)

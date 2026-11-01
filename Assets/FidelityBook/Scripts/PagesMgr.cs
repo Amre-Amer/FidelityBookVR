@@ -1,3 +1,4 @@
+using Unity.Android.Gradle;
 using UnityEngine;
 
 public class PagesMgr : MonoBehaviour
@@ -29,6 +30,19 @@ public class PagesMgr : MonoBehaviour
             {
                 page.TurnRight();
             }
+            if (n == g.nPageSelected)
+            {
+                page.Highlight(true, false);
+            } else
+            {
+                if (n == g.nPageSelected + 1)
+                {
+                    page.Highlight(false, true);
+                } else
+                {
+                    page.Highlight(false, false);
+                }
+            }
         }
     }
 
@@ -47,7 +61,7 @@ public class PagesMgr : MonoBehaviour
         }  
     }
 
-    public void SetNPageSelectedByDistFromTargetForTraining()
+    public void SetNPageSelectedByDistFromTarget()
     {
         float distMin = -1;
         g.nPageSelected = -1;

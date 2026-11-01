@@ -10,6 +10,7 @@ public class TrainMgr : MonoBehaviour
 
     void Start()
     {
+        if (g.trainInfer == TrainInferType.infer) return;
         numPages = g.pages.Count - 1;
         ResetFolder(g.pathFolder);
         AddClassFolders();
@@ -27,20 +28,27 @@ public class TrainMgr : MonoBehaviour
 
     public void UpdateTrain()
     {
+        cntSave++;
         if (cntSave == g.cntMaxTraining)
         {
             ShowProgressDone();
-            Debug.Log("Done\n");
+            Debug.Log("Done: " + g.cntMaxTraining + " saved" + "\n");
         }
         if (cntSave > g.cntMaxTraining) return;
+        SaveImage();
+        ShowProgress();
+        string txt = cntSave + "/" + g.cntMaxTraining;
+        g.displaysMgr.SetCount(txt);
+    }
+
+    void SaveImage()
+    {
         Texture2D tex = g.toolsMgr.RenderTextureToTexture2D(g.renderTexture);
         byte[] bytes = tex.EncodeToPNG();
         string pathClass = "class_" + g.nPageSelected;
         string filename = "image_" + cntSave + "_" + g.nPageSelected + ".png"; 
         string filespec = Path.Combine(g.pathFolder, pathClass, filename);
         File.WriteAllBytes(filespec, bytes);
-        ShowProgress();
-        cntSave++;
     }
 
     void ShowProgress()

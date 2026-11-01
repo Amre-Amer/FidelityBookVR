@@ -18,15 +18,44 @@ public class InferMgr : MonoBehaviour
     public float[] Infer(){
         Texture2D inputTexture = g.toolsMgr.RenderTextureToTexture2D(g.renderTexture);
         Color[] colors = inputTexture.GetPixels(); 
-        float[] rawInputData = ColorsToInputData(colors);        
-        using Tensor<float> inputTensor = new Tensor<float>(inputShape, rawInputData);
-        // Tensor<float> inputTensor = new Tensor<float>(inputShape, rawInputData);
-        worker.Schedule(inputTensor);
-        Tensor<float> outputTensor = worker.PeekOutput() as Tensor<float>;
-        float[] output = outputTensor.DownloadToArray();
+        // float[] rawInputData = ColorsToInputData(colors);   
+        // Debug.Log("colors: " + colors.Length + "\n");     
+            TensorShape shape = new TensorShape(1, g.channels, g.height, g.width);
+
+            // Tensor<float> inputTensor = new Tensor<float>(shape);
+            // TextureConverter.ToTensor(inputTexture, inputTensor);
+            // // using Tensor<float> inputTensor = new Tensor<float>(inputShape, rawInputData);
+            // // Tensor<float> inputTensor = new Tensor<float>(inputShape, rawInputData);
+            // worker.Schedule(inputTensor);
+            // Tensor<float> outputTensor = worker.PeekOutput() as Tensor<float>;
+            // float[] output = outputTensor.DownloadToArray();
         // Debug.Log($"Inference complete! Output shape: {outputTensor.shape}");
         // Debug.Log($"First output value: {outputTensor[0]}");
+
+        // TensorShape shape = new TensorShape(1, 1, 32, 64);
+
+        // TextureTransform settings = new TextureTransform();
+        //     settings.SetTensorLayout(TensorLayout.NCHW);
+            
+            // .SetChannelBits(ColorTensorChannels.R); // Extract only the Red/Grey channel
+        Tensor<float> inputTensor = new Tensor<float>(shape);
+        // TextureConverter.ToTensor(inputTexture, inputTensor);
+
+        TextureConverter.ToTensor(inputTexture, inputTensor);
+        // using Tensor<float> inputTensor = TextureConverter.ToTensor(inputTexture, shape, settings);
+        worker = new Worker(runtimeModel, BackendType.GPUCompute);
+        worker.Schedule(inputTensor);
+        Tensor<float> outputTensor = worker.PeekOutput() as Tensor<float>;
+        // outputTensor.MakeReadable(); 
+        float[] output = outputTensor.DownloadToArray();
+
+
+
         inputTensor.Dispose();
+
+    //    inputTensor.Dispose();
+ 
+
         float[] outputNormalized = Normalize(output);
         // SetNPageSelectedBForference(outputNormalized);
         ShowOutputDebug(outputNormalized);
@@ -62,22 +91,22 @@ public class InferMgr : MonoBehaviour
             }
             txtAll += "\n" + txt;
         }        
-        Debug.Log("g.nPageSelected: " + g.nPageSelected + txtAll + "\n");
+//        Debug.Log("g.nPageSelected: " + g.nPageSelected + txtAll + "\n");
     }
 
-    float[]ColorsToInputData(Color[] colors)
-    {
-        float[] rawInputData = new float[g.height * g.width * g.channels];        
-        for (int n = 0; n < colors.Length; n++)
-        {
-            Color color = colors[n];
-            int nn = n * g.channels;
-            rawInputData[nn] = color.r;
-            rawInputData[nn + 1] = color.g;
-            rawInputData[nn + 2] = color.b;
-        }
-        return rawInputData;
-    }
+    // float[]ColorsToInputData(Color[] colors)
+    // {
+    //     float[] rawInputData = new float[g.height * g.width * g.channels];        
+    //     for (int n = 0; n < colors.Length; n++)
+    //     {
+    //         Color color = colors[n];
+    //         int nn = n * g.channels;
+    //         rawInputData[nn] = color.r;
+    //         rawInputData[nn + 1] = color.g;
+    //         rawInputData[nn + 2] = color.b;
+    //     }
+    //     return rawInputData;
+    // }
 
     float[] Normalize(float[] array)
     {

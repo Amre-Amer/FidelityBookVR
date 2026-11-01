@@ -3,6 +3,7 @@ using UnityEngine;
 public class ScoreMgr : MonoBehaviour
 {
     public GlobalsMgr g;
+    public GameObject body;
     
     public void SetValue(float value)
     {
@@ -11,6 +12,6 @@ public class ScoreMgr : MonoBehaviour
 
     public void SetColor(Color color)
     {
-        g.toolsMgr.SetColorInChildren(gameObject, color);      
+        g.toolsMgr.SetColor(body, color);      
     }
 }

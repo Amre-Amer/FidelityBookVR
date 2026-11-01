@@ -3,34 +3,30 @@ using UnityEngine;
 public class TargetMgr : MonoBehaviour
 {
     public GlobalsMgr g;
-    float distMove;
-    float dirMove;
 
-    void Start()
-    {
-        distMove = .01f;
-        dirMove = 1;
-        
+    public void MoveTargetInEditor()
+    {        
+        MoveTarget();
+        SetDirMoveTarget();
     }
 
-    public void UpdateTargetInEditor()
+    void SetDirMoveTarget()
     {
-        MoveTarget();
         float z = g.goTarget.transform.position.z;
-        if (dirMove == 1 && z > g.goRight.transform.position.z)
+        if (g.dirMoveTarget == 1 && z > g.goRight.transform.position.z)
         {
-            dirMove  = -1;
+            g.dirMoveTarget  = -1;
         }
-        if (dirMove == -1 && z < g.goLeft.transform.position.z)
+        if (g.dirMoveTarget == -1 && z < g.goLeft.transform.position.z)
         {
-            dirMove  = 1;
+            g.dirMoveTarget  = 1;
         }
     }
 
     void MoveTarget()
     {
         Vector3 pos = g.goTarget.transform.position;
-        pos.z += distMove * dirMove;
+        pos.z += g.distMoveTarget * g.dirMoveTarget;
         g.goTarget.transform.position = pos;
     }
 }

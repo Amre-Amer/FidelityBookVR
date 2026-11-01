@@ -5,109 +5,107 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
-# 1. SETUP CONSTANTS & CONFIGURATION
-IMAGE_HEIGHT = 32
-IMAGE_WIDTH = 64
-NUM_CLASSES = 9
-BATCH_SIZE = 32
-NUM_EPOCHS = 5  # Epoch variable
-DATA_DIR = "image_data"  # Root directory containing 9 subfolders (one per class)
-ONNX_FILE_PATH = "fidelity-book.onnx"
-
-# 2. IMAGE LOADING & PREPROCESSING FROM DIRECTORY
-# Expected directory structure:
-# dataset/
-#   ├── class_1/
-#   │     └── img1.jpg
-#   └── ...
-#   └── class_9/
-#         └── imgN.jpg
-
-image_transforms = transforms.Compose([
-    transforms.Resize((IMAGE_HEIGHT, IMAGE_WIDTH)),  # Resize to 32x64 (H x W)
-    transforms.ToTensor(),                           # Convert to tensor (C x H x W)
-    transforms.Normalize(mean=[0.5, 0.5, 0.5],       # Normalize pixel values
-                         std=[0.5, 0.5, 0.5])
+# 1. Define the Preprocessing Pipeline
+# Converts 3-channel images to 1-channel grayscale and resizes to 32x64 (HxW)
+transform = transforms.Compose([
+    transforms.Grayscale(num_output_channels=1), 
+    transforms.Resize((32, 64)),                 # Height=32, Width=64
+    transforms.ToTensor(),
+    transforms.Normalize((0.5,), (0.5,))
 ])
 
-# Load dataset using ImageFolder
-dataset = datasets.ImageFolder(root=DATA_DIR, transform=image_transforms)
-dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True, drop_last=True)
+# 2. Load Images from Folder
+# Expects a directory structure like: data/train/class_1/*.png
+# Replace 'data/train' with your actual folder path
+data_dir = "image_data" 
 
-print(f"Loaded {len(dataset)} images across {len(dataset.classes)} classes.")
+if not os.path.exists(data_dir):
+    print(f"Creating dummy directory '{data_dir}'. Please place your class folders inside.")
+    os.makedirs(data_dir, exist_ok=True)
+    # Creating a fake structure for script to run without crashing initially
+    os.makedirs(os.path.join(data_dir, "dummy_class"), exist_ok=True)
 
-# 3. DEFINE A SIMPLE CNN MODEL
-class SimpleCNN(nn.Module):
+dataset = datasets.ImageFolder(root=data_dir, transform=transform)
+dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
+
+# Determine number of classes dynamically
+num_classes = len(dataset.classes) if len(dataset.classes) > 0 else 10
+
+# 3. Define a Simple Model compatible with 1x32x64 Input
+class ConvNet(nn.Module):
     def __init__(self, num_classes):
-        super(SimpleCNN, self).__init__()
+        super(ConvNet, self).__init__()
         self.features = nn.Sequential(
-            nn.Conv2d(3, 16, kernel_size=3, padding=1),
+            nn.Conv2d(1, 16, kernel_size=3, padding=1), # 1 input channel (grayscale)
             nn.ReLU(),
-            nn.MaxPool2d(2, 2),  # Output: 16 x 16 x 32
+            nn.MaxPool2d(2, 2),                         # Output: 16 x 16 x 32
             nn.Conv2d(16, 32, kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.MaxPool2d(2, 2)   # Output: 32 x 8 x 16
+            nn.MaxPool2d(2, 2)                          # Output: 32 x 8 x 16
         )
-        self.classifier = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(32 * 8 * 16, 128),
-            nn.ReLU(),
-            nn.Linear(128, num_classes)
-        )
+        self.classifier = nn.Linear(32 * 8 * 16, num_classes)
 
     def forward(self, x):
         x = self.features(x)
+        x = torch.flatten(x, 1)
         x = self.classifier(x)
         return x
 
-# Initialize model, loss, and optimizer
+# Initialize system
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = SimpleCNN(num_classes=NUM_CLASSES).to(device)
+model = ConvNet(num_classes=num_classes).to(device)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-# 4. TRAINING LOOP SHOWING THE EPOCH VARIABLE
-print("\n--- Starting Training ---")
-for epoch in range(1, NUM_EPOCHS + 1):
+# 4. Training Loop showing Epoch Progress
+num_epochs = 100
+print("Starting Training...")
+
+for epoch in range(num_epochs):
     model.train()
     running_loss = 0.0
+    correct = 0
+    total = 0
     
     for images, labels in dataloader:
         images, labels = images.to(device), labels.to(device)
         
-        optimizer.zero_grad()
+        # Forward pass
         outputs = model(images)
         loss = criterion(outputs, labels)
+        
+        # Backward pass and optimize
+        optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         
         running_loss += loss.item() * images.size(0)
+        _, predicted = outputs.max(1)
+        total += labels.size(0)
+        correct += predicted.eq(labels).sum().item()
         
     epoch_loss = running_loss / len(dataloader.dataset)
-    print(f"Epoch [{epoch}/{NUM_EPOCHS}] - Loss: {epoch_loss:.4f}")
+    epoch_acc = 100. * correct / total
+    print(f"Epoch [{epoch+1}/{num_epochs}] - Loss: {epoch_loss:.4f} - Acc: {epoch_acc:.2f}%")
 
-print("Training Complete.\n")
+print("Training Finished.")
 
-# 5. EXPORT THE MODEL TO ONNX FORMAT
-model.eval()  # Set model to evaluation mode before exporting
+# 5. Export Trained Model to ONNX format
+model.eval()
+# Create dummy input tracking the shape: Batch size 1, 1 Channel, 32 Height, 64 Width
+dummy_input = torch.randn(1, 1, 32, 64, device=device)
+onnx_filename = "fidelity-book.onnx"
 
-# Create dummy input matching the shape: (Batch Size, Channels, Height, Width)
-# PyTorch expects (Channels, Height, Width), so it is 3 x 32 x 64
-dummy_input = torch.randn(1, 3, IMAGE_HEIGHT, IMAGE_WIDTH, device=device)
-
-print(f"Exporting model to {ONNX_FILE_PATH}...")
 torch.onnx.export(
-    model,                      # Model being run
-    dummy_input,                # Model input (or a tuple for multiple inputs)
-    ONNX_FILE_PATH,             # Where to save the model
-    export_params=True,         # Store the trained parameter weights inside the model file
-    opset_version=11,           # The ONNX version to export the model to
-    do_constant_folding=True,   # Whether to execute constant folding for optimization
-    input_names=['input'],      # The model's input names
-    output_names=['output'],    # The model's output names
-    dynamic_axes={              # Allow variable batch sizes during deployment
-        'input': {0: 'batch_size'},
-        'output': {0: 'batch_size'}
-    }
+    model, 
+    dummy_input, 
+    onnx_filename, 
+    export_params=True, 
+    opset_version=18, 
+    do_constant_folding=True, 
+    input_names=['input'], 
+    output_names=['output'],
+    dynamic_axes={'input': {0: 'batch_size'}, 'output': {0: 'batch_size'}} # Allows variable batch sizes during inference
 )
-print("ONNX export successful.")
+
+print(f"Model successfully converted and saved to {onnx_filename}")

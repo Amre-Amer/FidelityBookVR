@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5121959077556658342}
   - component: {fileID: 1709387002526702807}
   m_Layer: 0
-  m_Name: Cube (1)
+  m_Name: PanelRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -211,8 +211,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5191833994210401347}
-  - {fileID: 6859107302646352960}
   - {fileID: 616940841114931785}
+  - {fileID: 6859107302646352960}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6388554999466504818
@@ -227,6 +227,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b067000774734ab48b4c275fc4170be2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PageMgr
+  panel: {fileID: 1594111644215288000}
+  panelOther: {fileID: 7856186244880598592}
 --- !u!1 &7856186244880598592
 GameObject:
   m_ObjectHideFlags: 0
@@ -239,7 +241,7 @@ GameObject:
   - component: {fileID: 8788151424454986064}
   - component: {fileID: 6377422915596971353}
   m_Layer: 0
-  m_Name: Cube (2)
+  m_Name: PanelLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

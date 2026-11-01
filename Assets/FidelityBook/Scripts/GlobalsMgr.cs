@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.InferenceEngine;
-using UnityEditor;
 // #if UNITY_EDITOR
 // using UnityEditor;
 // #endif
@@ -17,8 +16,13 @@ public class GlobalsMgr : MonoBehaviour
     public int channels;
     public int cntMaxTraining;
     public string pathFolder;
+    [Header("Parameters")]
+    public bool ynSlowTarget;
     public int nPageSelected;
-    public float scoreScale;
+    public float distMoveTarget;
+    public float dirMoveTarget;
+    public float angDeltaPage;
+    public float scoreScale;  // ?
     [Header("Classes")]
     public FpsMgr fpsMgr;
     public RenderTexture renderTexture;
@@ -45,12 +49,6 @@ public class GlobalsMgr : MonoBehaviour
         // {
         //     // myEditorValue = "Updated in Awake!";
         //     // 6144 floats 
-        //     height = 32;
-        //     width = 64;
-        //     channels = 3;
-        //     cntMaxTraining = 1000;
-        //     pathFolder = "C:\\Users\\Amre\\FidelityBook\\Assets\\FidelityBook\\Python\\image_data";
-        //     nPageSelected = -1;
 
         //     #if UNITY_EDITOR
         //     // Mark the object as dirty so Unity saves the change to the scene/prefab
@@ -60,9 +58,13 @@ public class GlobalsMgr : MonoBehaviour
         // 6144 floats 
         height = 32;
         width = 64;
-        channels = 3;
+        channels = 1; //3
         cntMaxTraining = 1000;
         pathFolder = "C:\\Users\\Amre\\FidelityBook\\Assets\\FidelityBook\\Python\\image_data";
+        distMoveTarget = .05f;
+        dirMoveTarget = 1;
+        angDeltaPage = 15;    
+        ynSlowTarget = true;
         scoreScale = 2;        
     }
 }

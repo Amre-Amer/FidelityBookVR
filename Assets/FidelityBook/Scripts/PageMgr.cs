@@ -2,16 +2,18 @@ using UnityEngine;
 
 public class PageMgr : MonoBehaviour
 {
-    float angDelta = 15;
+    public GlobalsMgr g;
+    public GameObject panel;
+    public GameObject panelOther;
 
     public void TurnLeft()
     {
-        Turn(-1 * angDelta);
+        Turn(-1 * g.angDeltaPage);
     }
 
     public void TurnRight()
     {
-        Turn(angDelta);
+        Turn(g.angDeltaPage);
     }
 
     void Turn(float ang)
@@ -19,5 +21,11 @@ public class PageMgr : MonoBehaviour
         Vector3 eul = transform.localEulerAngles;
         eul.x = ang;
         transform.localEulerAngles = eul;
+    }
+
+    public void Highlight(bool ynOnLeft, bool ynOnRight)
+    {
+        panel.GetComponent<Renderer>().enabled = ynOnLeft;
+        panelOther.GetComponent<Renderer>().enabled = ynOnRight;
     }
 }

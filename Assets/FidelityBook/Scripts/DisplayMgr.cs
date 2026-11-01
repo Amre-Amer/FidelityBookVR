@@ -6,10 +6,17 @@ public class DisplayMgr : MonoBehaviour
     public GlobalsMgr g;
     public TMP_Text textFps;
     public GameObject goProgress;
+    public GameObject body;
+    public TMP_Text textCount;
 
     public void SetFps(int fps)
     {
         textFps.text = "fps: " + fps;
+    }
+
+    public void SetCount(string txt)
+    {
+        textCount.text = txt;
     }
 
     public void SetProgress(float progress)
@@ -20,6 +27,6 @@ public class DisplayMgr : MonoBehaviour
 
     public void ShowProgressDone()
     {
-        g.toolsMgr.SetColor(goProgress, Color.green);        
+        g.toolsMgr.SetColor(body, Color.green);        
     }
 }
