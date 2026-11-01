@@ -25,9 +25,28 @@ public class FidelityBookMgr : MonoBehaviour
     {
         bool ynOk = Application.isEditor || g.handsMgr.SetPosLeftIfAvailable();
         if (ynOk == false) {
-            Debug.Log("<color=red>Not in editor or Hands not available</color>\n");
+            g.toolsMgr.ErrorMessage("Not in editor or Hands not available");
             return;
         }
+        MoveTarget();
+        g.pagesMgr.SetNPageSelectedByDistFromTarget();
+        g.pagesMgr.AdjustPages();
+        switch (g.trainInfer)
+        {
+            case TrainInferType.train:
+                g.trainMgr.SaveImageForTraining();
+                g.scoresMgr.HighlightScoresForTraining();
+                break;
+            case TrainInferType.infer:
+                float[] outputNormalized = g.inferMgr.Infer();
+                g.pagesMgr.SetNPageSelectedForInference(outputNormalized);
+                g.scoresMgr.HighlightScoresForInference(outputNormalized);
+                break;
+        }
+    }
+
+    void MoveTarget()
+    {
         if (Application.isEditor) { 
             elapsed = Time.realtimeSinceStartup - timeLast;
             if (g.trainInfer == TrainInferType.train || g.ynSlowTarget == false || elapsed > delay)
@@ -39,20 +58,6 @@ public class FidelityBookMgr : MonoBehaviour
         else
         {
             g.goTarget.transform.position = g.posLeftHand;    
-        }
-        g.pagesMgr.SetNPageSelectedByDistFromTarget();
-        g.pagesMgr.AdjustPages();
-        switch (g.trainInfer)
-        {
-            case TrainInferType.train:
-                g.trainMgr.UpdateTrain();
-                g.scoresMgr.HighlightScoresForTraining();
-                break;
-            case TrainInferType.infer:
-                float[] outputNormalized = g.inferMgr.Infer();
-                g.pagesMgr.SetNPageSelectedForInference(outputNormalized);
-                g.scoresMgr.HighlightScoresForInference(outputNormalized);
-                break;
         }
     }
 }

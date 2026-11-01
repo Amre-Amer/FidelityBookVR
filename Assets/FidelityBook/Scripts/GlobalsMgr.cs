@@ -42,6 +42,8 @@ public class GlobalsMgr : MonoBehaviour
     public Vector3 posRightRight;
     public List<DisplayMgr> displays;
     public List<PageMgr> pages;
+    public AudioSource audioSource;
+    public AudioClip clipError;
 
     void Awake()
     {

@@ -26,7 +26,7 @@ public class TrainMgr : MonoBehaviour
         }
     }
 
-    public void UpdateTrain()
+    public void SaveImageForTraining()
     {
         cntSave++;
         if (cntSave == g.cntMaxTraining)

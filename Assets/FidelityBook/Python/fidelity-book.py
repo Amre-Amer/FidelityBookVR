@@ -12,7 +12,7 @@ IMAGE_WIDTH = 64
 CHANNELS = 1
 BATCH_SIZE = 32
 NUM_CLASSES = 9
-NUM_EPOCHS = 1000 #0 #500 #1000  # Epoch variable
+NUM_EPOCHS = 100 #0 #500 #1000  # Epoch variable
 DATA_DIR = "image_data"  # Root directory containing 9 subfolders (one per class)
 ONNX_FILE_PATH = "fidelity-book.onnx"
 

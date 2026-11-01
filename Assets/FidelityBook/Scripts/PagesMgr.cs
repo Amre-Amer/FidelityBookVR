@@ -1,4 +1,3 @@
-using Unity.Android.Gradle;
 using UnityEngine;
 
 public class PagesMgr : MonoBehaviour
@@ -77,7 +76,7 @@ public class PagesMgr : MonoBehaviour
         }    
         if (g.nPageSelected == -1)
         {
-            Debug.Log("<color=red>g.nPageSelected == -1</color>\n");
+            g.toolsMgr.ErrorMessage("g.nPageSelected == -1");
         }
     }
 }
