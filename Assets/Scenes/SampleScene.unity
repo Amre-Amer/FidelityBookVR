@@ -7575,7 +7575,7 @@ MonoBehaviour:
   channels: 0
   cntMaxTraining: 0
   pathFolder: 
-  ynSlowTarget: 1
+  ynSlowTarget: 0
   nPageSelected: 0
   distMoveTarget: 0
   dirMoveTarget: 0
